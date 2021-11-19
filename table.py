@@ -1,5 +1,8 @@
 import sqlite3
 
+global conn 
+conn = sqlite3.connect(':memory:')
+
 def drop_table(conn):
     # Удаление таблицы
     print('Droping tables...')
@@ -22,13 +25,14 @@ def init_table(conn):
         """)
     conn.commit()
 
-def read_data(conn):
+def read_data():
     cursor = conn.cursor()
     cursor.execute("""
         SELECT *
         FROM last_request
         """)
-    return cursor.fetchone()
+    data = cursor.fetchone()
+    return {'sender_id': data[0], 'message': data[0], 'is_busy':bool(data[2]) }
 
 def set_data(conn, *args, **kwarg):
     cursor = conn.cursor()
@@ -41,7 +45,8 @@ def set_data(conn, *args, **kwarg):
 
 if __name__ == "__main__":
     print("Connecting to database")
-    conn = sqlite3.connect(':memory:')
+    
     init_table(conn)
+    x = read_data(conn)
     conn.close()
     pass
